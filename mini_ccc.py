@@ -13,30 +13,52 @@ class MiniCleanedCommonCrawl(datasets.GeneratorBasedBuilder):
         """
         Should return a DatasetInfo object describing <string> type values for a url and it's corresponding text.
         """
-        return datasets.DatasetInfo()
+        return datasets.DatasetInfo(
+        description=_DESCRIPTION,
+        features=datasets.Features({
+            "url": datasets.Value("string"),
+            "text": datasets.Value("string"),
+        }),
+        supervised_keys=None,
+        homepage="https://commoncrawl.org/",
+        citation="",
+    )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """
         Should return a SplitGenerator object which downloads your data and creates train and validation splits.
         """
-        return datasets.SplitGenerator(),
+        downloaded_files = dl_manager.download([_DATA_URL])
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={"filepaths": downloaded_files}
+            ),
+        ]
+        # return datasets.SplitGenerator(),
     
     def _generate_examples(self, filepaths: List[str]) -> Iterator[Tuple[Any, Dict[str, str]]]:
         """
         Streams raw data from the downloaded file and yields tuples consisting of a unique ID and the url/cleaned text.
         Should call the functions you defined in homework.py. 
         """
+        # for filepath in filepaths:
+        #     for url, html_text in read_
+        pass
  
- if __name__ == "__main__":   
+if __name__ == "__main__":
     # Note: Calling load_dataset caches the processed dataset locally.
     # The default cache directory is ~/.cache/huggingface/datasets.
     # To force the dataset to be recreated, you should pass in the
     # additional argument download_mode=datasets.DownloadMode.REUSE_CACHE_IF_EXISTS
-    dataset = datasets.load_dataset(
-        "mini_ccc_solution.py",
-        "MiniCleanedCommonCrawl",
-        trust_remote_code=True,
-        split=datasets.Split.TRAIN)
+    # dataset = datasets.load_dataset(
+    #     "mini_ccc.py",
+    #     # "MiniCleanedCommonCrawl",
+    #     # trust_remote_code=True,
+    #     split=datasets.Split.TRAIN)
+
+    builder = MiniCleanedCommonCrawl()
+    builder.download_and_prepare()
     
     # Iterate over the first 100 examples.
     for ex in dataset.take(100):
