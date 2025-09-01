@@ -1,0 +1,4 @@
+# Ignore WARC/WAT/WET files
+*.warc
+*.wat
+*.wet
