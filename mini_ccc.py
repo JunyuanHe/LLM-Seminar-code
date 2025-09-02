@@ -2,6 +2,7 @@
 import datasets
 import homework 
 from typing import List, Iterator, Tuple, Dict, Any
+from utils import read_warc_file 
 
 logger = datasets.logging.get_logger(__name__)
 
@@ -44,7 +45,14 @@ class MiniCleanedCommonCrawl(datasets.GeneratorBasedBuilder):
         """
         # for filepath in filepaths:
         #     for url, html_text in read_
-        pass
+        for file in filepaths:
+            for url, html_text in read_warc_file(file):
+                text = html_to_text(html_text)
+                cleaned_text = clean_text(text)
+                cleaned_nopii_text = replace_pii(cleaned_text)
+                passes_check = heuristic_quality_filter(cleaned_nopii_text)
+            
+
  
 if __name__ == "__main__":
     # Note: Calling load_dataset caches the processed dataset locally.
