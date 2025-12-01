@@ -35,6 +35,14 @@ def html_to_text(html: str) -> str:
     Returns:
         str: Plain text extracted from HTML.
     """
+    # detected = chardet.detect(html)
+    # encoding = detected.get("encoding") or "utf-8"
+    # html_decoded = html.decode(encoding, errors="ignore")
+
+    # soup = BeautifulSoup(html_decoded, "html.parser")
+    # text = soup.get_text(separator="\n", strip=True)
+    # return text
+
     MIN_LENGTH = 100                 # Minimum total characters
     MAX_SYMBOL_RATIO = 0.3           # Maximum symbol/code ratio
     TERMINAL_PUNCTUATION = (".", "!", "?", '"', "”", "’", "？", "。", "！")  # sentence endings
@@ -104,13 +112,14 @@ def replace_pii(text: str) -> str:
     Returns:
         str: Text with PII obfuscated.
     """
-    # SSN_PATTERN.sub("XXX-XX-XXXX", text)
-    # PHONE_PATTERN.sub(r'\d', 'X', text)  # Replace all digits with 'X'
-    PHONE_PATTERN = r'\+1\s*(\d{10})'
-    SSN_PATTERN = r'\b\d{3}-\d{2}-\d{4}\b'
-    text = re.sub(PHONE_PATTERN, lambda match: re.sub(r'\d', 'X', match.group()), text)
-    text = re.sub(SSN_PATTERN, lambda match: re.sub(r'\d', 'X', match.group()), text)
-    return text
+    if text != None:
+        PHONE_PATTERN = r'\+1\s*(\d{10})'
+        SSN_PATTERN = r'\b\d{3}-\d{2}-\d{4}\b'
+        text = re.sub(PHONE_PATTERN, lambda match: re.sub(r'\d', 'X', match.group()), text)
+        text = re.sub(SSN_PATTERN, lambda match: re.sub(r'\d', 'X', match.group()), text)
+        return text
+    else:
+        return None
 
 def clean_text(text: str) -> str:
     """Removes substrings identified as low-quality according to alphanumeric, whitespace and valid document checks.  
@@ -174,8 +183,8 @@ if __name__ == '__main__' :
     #             count += 1
     # print(count)
 
-    # str = replace_pii("My phone No is +1 1893749534, and SSN is 172-47-4823")
-    # print(str)
+    str = replace_pii("My phone No is +1 1893749534, and SSN is 172-47-4823")
+    print(str)
 
     if args.fname:
         for url, html_text in read_warc_file(args.fname, args.num_records):

@@ -16,16 +16,18 @@ def read_warc_file(fname: str, num_to_read: Optional[int] = None) -> Iterator[Tu
     """
 
     count = 0
+    lst = []
     with open(fname, 'rb') as stream:
         for record in ArchiveIterator(stream):
             if (record.rec_type == 'response') and (record.http_headers.get_header('Content-Type') == 'text/html'):
                 url = record.rec_headers.get_header('WARC-Target-URI')
                 html = record.content_stream().read()
                 count += 1
-                yield (url,  html)
+                # yield (url,  html)
+                lst.append([url, html])
             if num_to_read and count == num_to_read:
                 break
-
+        return lst
 
 def read_wet_file(fname, num_to_read=None):
     """Parses a warc file.
